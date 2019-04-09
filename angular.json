@@ -23,9 +23,13 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "html-draws//css/kickstart.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "html-draws/js/kickstart.js",
+              "html-draws/js/automatic-branching.js"
+            ],
             "es5BrowserSupport": true
           },
           "configurations": {

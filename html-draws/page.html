@@ -1,0 +1,147 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="js/kickstart.js"></script> <!-- KICKSTART -->
+<link rel="stylesheet" href="css/kickstart.css" media="all" /> <!-- KICKSTART -->
+<html>
+<body class="elements">
+
+<div class="col_12">
+  <h4>Automatic branch generator</h4>
+  <form class="vertical"><div class="col_4">
+    <label for="repository">Repository</label>
+    <input type="text" id="repository" name="repository" placeholder="Bitbucket url" />
+
+    <label for="select_branch">Branch Type</label>
+    <select id="select_branch" class="fancy">
+    <option selected="selected" value="0">-- Choose --</option>
+    <option value="1">feature</option>
+    <option value="2">release</option>
+    <option value="3">hotfix</option>
+    </select>
+
+    <label for="select_status">Status</label>
+    <select id="select_status" class="fancy">
+    <option selected="selected" value="0">-- Choose --</option>
+    <option value="1">Start</option>
+    <option value="2">Push</option>
+    <option value="3">Finish</option>
+    </select>
+	
+    <div id="div_branch_name">
+      <label for="branch" id="label_branch_name">Branch Name</label>
+      <input type="text" id="branch" name="branch" placeholder="branch name" />
+    </div>
+
+    <div id="div_maven_profile">
+      <label for="maven_profile">Maven Profile</label>
+      <input type="text" id="maven_profile" name="maven_profile" placeholder="Maven Profile" />
+    </div>
+
+    <div id="div_version">	
+      <label for="version">Version</label>
+      <input type="text" id="version" name="version" placeholder="version" />
+    </div>
+
+    <button type="submit" class="small green">Submit</button>
+    </form>
+  </div>
+<script>
+$(document).ready(function(){
+  function ChangePresentation() {
+    $("#div_version").hide();
+    $("#div_maven_profile").hide();
+    $("#div_branch_name").hide();
+
+    switch (selectedBranchType) {
+      case "1": // Feature
+        $("#div_version").hide();
+        switch (selectedStatus) { 
+          case "1": $("#label_branch_name").text("Feature Name");$("#div_branch_name").show(); $("#div_maven_profile").hide(); break;
+          case "2": $("#div_branch_name").hide(); $("#div_maven_profile").show(); break;
+          case "3": $("#label_branch_name").text("Feature branch to merge");$("#div_branch_name").show(); $("#div_maven_profile").show(); break;
+        }
+        break;
+      case "2": // Release
+        $("#div_version").hide();
+        $("#div_maven_profile").show();
+        switch (selectedStatus) { 
+          case "1": $("#div_branch_name").hide(); break;
+          case "2": $("#div_branch_name").hide(); break;
+          case "3": $("#label_branch_name").text("Release branch to merge");$("#div_branch_name").show(); break;
+        }
+        break;
+      case "3": // Hotfix
+        switch (selectedStatus) { 
+          case "1": $("#div_branch_name").hide();$("#div_maven_profile").hide(); $("#div_version").show(); break;
+          case "2": $("#div_branch_name").hide();$("#div_maven_profile").show(); $("#div_version").hide(); break;
+          case "3": $("#label_branch_name").text("Hotfix branch to merge");$("#div_branch_name").show();$("#div_maven_profile").show(); $("#div_version").show(); break;
+        }
+        break;
+    }
+  }
+
+  function buildURLParams(
+                    selectedBranchType,
+                    selectedStatus) {
+    urlParams ="REPO_URL=" + $("#repository").val();
+    switch (selectedBranchType) {
+      case "1": // Feature
+        switch (selectedStatus) { 
+          case "1":  urlParams += "&BRANCH_NAME=develop&FEATURE_STATUS=start&FEATURE_NAME=" + $("#branch").val();break;
+          case "2":  urlParams += "&MAVEN_PROFILE=" + $("#maven_profile").val();break;
+          case "3":  urlParams += "&BRANCH_NAME=" + $("#branch").val() + "&FEATURE_STATUS=finish&MAVEN_PROFILE=" + $("#maven_profile").val();
+        }
+        break;
+      case "2": // Release
+        switch (selectedStatus) { 
+          case "1":  urlParams += "&BRANCH_NAME=develop&RELEASE_STATUS=start&MAVEN_PROFILE=" + $("#maven_profile").val();break;
+          case "2":  urlParams += "&MAVEN_PROFILE=" + $("#maven_profile").val();break;
+          case "3":  urlParams += "&BRANCH_NAME=" + $("#branch").val() + "&MAVEN_PROFILE=" + $("#maven_profile").val() + "&RELEASE_STATUS=finish";
+        }
+        break;
+      case "3": // Hotfix
+        switch (selectedStatus) { 
+          case "1":  urlParams += "&BRANCH_NAME=master&HOTFIX_STATUS=start&MAVEN_PROFILE=" + $("#maven_profile").val() + "&HOTFIX_VERSION=" + $("#version").val() ;break;
+          case "2":  urlParams += "&MAVEN_PROFILE=" + $("#maven_profile").val();break;
+          case "3":  urlParams += "&BRANCH_NAME=" + $("#branch").val() + "&MAVEN_PROFILE=" + $("#maven_profile").val() + "&HOTFIX_STATUS=finish" + 
+                                                "&HOTFIX_VERSION=" + $("#version").val();
+        }
+        break;
+    }
+    return urlParams;
+  }
+
+  var selectedBranchType = "",
+      selectedStatus     = "";
+
+  $("#select_branch").val("0");
+  $("#select_status").val("0");
+
+  ChangePresentation();
+
+  $("#select_branch").change(function(){
+    selectedBranchType = $("#select_branch option:selected").val();
+    ChangePresentation();
+  });
+
+  $("#select_status").change(function(){
+    selectedStatus = $("#select_status option:selected").val();
+    ChangePresentation();
+  });
+  
+  $("form").submit(function( event ) {
+    event.preventDefault();
+
+    if (selectedBranchType == "" || selectedStatus == "" ) {
+      alert("You must choose a branch type and a branch status");
+
+      return;
+    }
+    location.href = 'https://google.com/?' + buildURLParams(
+             selectedBranchType,
+             selectedStatus); 
+
+  });
+});
+</script>
+</body>
+</html>
