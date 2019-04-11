@@ -8,14 +8,37 @@ export class AppPage {
   getTitleText() {
     return element(by.css('app-root h1')).getText();
   }
-  setRepository (repository){
+
+  setRepository(repository) {
     return element(by.id('repository')).sendKeys(repository);
   }
-  setBranchType (branch_type){
 
-    var SelectWrapper  = require('../select-wrapper');
-    var mySelect = new SelectWrapper(by.id('select_branch'));
+  setBranch(branch) {
+    console.log('En setBranch branch es: ' + branch);
+    return element(by.id('branch')).sendKeys(branch);
+  }
 
-    return mySelect.selectByText(branch_type);
+  setBranchType(branchType) {
+    const SelectWrapper  = require('../select-wrapper');
+    const mySelect = new SelectWrapper(by.id('select_branch'));
+
+    return mySelect.selectByText(branchType);
+  }
+
+  setStatus(status) {
+    const SelectWrapper  = require('../select-wrapper');
+    const mySelect = new SelectWrapper(by.id('select_status'));
+
+    return mySelect.selectByText(status);
+  }
+
+  getURLParameters() {
+    return element(by.id('params_joined')).getText();
+  }
+
+  touchField() {
+    return browser.touchActions().
+    tap(element(by.id('repository'))).
+    perform();
   }
 }

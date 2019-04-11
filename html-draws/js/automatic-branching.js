@@ -1,4 +1,7 @@
 $(document).ready(function(){
+  var selectedBranchType = "";
+  var selectedStatus     = "";
+
   function ChangePresentation() {
     $("#div_version").hide();
     $("#div_maven_profile").hide();
@@ -30,11 +33,10 @@ $(document).ready(function(){
         }
         break;
     }
+    $("#params_joined").text(buildURLParams());
   }
 
-  function buildURLParams(
-    selectedBranchType,
-    selectedStatus) {
+  function buildURLParams() {
     urlParams ="REPO_URL=" + $("#repository").val();
     switch (selectedBranchType) {
       case "1": // Feature
@@ -60,11 +62,9 @@ $(document).ready(function(){
         }
         break;
     }
+
     return urlParams;
   }
-
-  var selectedBranchType = "",
-    selectedStatus     = "";
 
   $("#select_branch").val("0");
   $("#select_status").val("0");
@@ -81,6 +81,14 @@ $(document).ready(function(){
     ChangePresentation();
   });
 
+  $("#repository").change(function(){
+    ChangePresentation();
+  });
+
+  $("#branch").change(function(){
+    ChangePresentation();
+  });
+
   $("form").submit(function( event ) {
     event.preventDefault();
 
@@ -89,9 +97,7 @@ $(document).ready(function(){
 
       return;
     }
-    location.href = 'https://google.com/?' + buildURLParams(
-      selectedBranchType,
-      selectedStatus);
+    location.href = 'https://google.com/?' + buildURLParams();
 
   });
 });

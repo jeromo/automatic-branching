@@ -11,5 +11,7 @@ Feature: Go the the home
     When I write a repository
     And  I choose branch type feature
     And  I choose status start
+    And  I set feature name
+    When I write a repository
     Then I get parameters repository feature start
 
